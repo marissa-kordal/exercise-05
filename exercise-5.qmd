@@ -1,0 +1,181 @@
+---
+title: "Exercise-05"
+format: html
+date: 3-4-36
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r} 
+
+#| eval: false
+#| 
+library(tidyverse)
+library(ggplot2)
+library(fishualize)
+library(mosaic)
+
+ds<-"http://raw.githubusercontent.com/difiore/ada-datasets/main/IMDB-movies.csv"
+
+movie<-read.csv(ds)
+
+#step 2
+filter_movies<-movie%>%
+  filter(startYear >= 1920, startYear <= 1979)%>%
+  filter(runtimeMinutes>=60, runtimeMinutes<=180)%>%
+  mutate(decade = case_when(
+    startYear >= 1920 & startYear <= 1929 ~ "1920s",
+    startYear >= 1930 & startYear <= 1939 ~ "1930s",
+    startYear >= 1940 & startYear <= 1949 ~ "1940s",
+    startYear >= 1950 & startYear <= 1959 ~ "1950s",
+    startYear >= 1960 & startYear <= 1969 ~ "1960s",
+    startYear >= 1970 & startYear <= 1979 ~ "1970s",
+  ))
+
+#step 3
+movie_time<-ggplot(data = filter_movies, aes(x = runtimeMinutes))+
+  geom_histogram(fill = "cyan3", col = "cyan3")+
+  facet_wrap(~ decade)+
+  theme_classic()
+
+#step 4 use a one-line statement to calculate the population mean and population standard deviation in runtimeminutes for each decade and save the results in a new dataframe called results 
+
+results<- filter_movies%>%
+  group_by(decade)%>%
+  summarise(avg = mean(runtimeMinutes),
+            sd = sd(runtimeMinutes),
+            se = sd/sqrt(nrow(movie_decade)))
+
+##step 5 draw a single sample of 100 movies, without replacement, from each decade and calculate the single sample mean and single sample standard deviation in runtimeminutes for each decade. 
+
+reps<-100
+
+movie_decade<-filter_movies%>%
+  group_by(decade)%>%
+  sample_n(size = 100, replace = FALSE)
+
+mean_sd_movie<-movie_decade%>%
+  group_by(decade)%>%
+  summarise(avg = mean(runtimeMinutes),
+            sd = sd(runtimeMinutes))
+
+##step 6 calculate for each decade the standard error around your estimate of the population mean runtimeminutes based on the standard dev and sample size (n=100 movies) of your single sample.
+
+mean_sd_movie<-movie_decade%>%
+  group_by(decade)%>%
+  summarise(avg = mean(runtimeMinutes),
+            sd = sd(runtimeMinutes),
+            se = sd/sqrt(nrow(movie_decade)))
+
+##step 7 compare the estimates to the actual population mean runtimeMinutes for each decade and to the expected SE in the population mean for samples of size 100 based on the known population SD for each decade. 
+
+joined<-full_join(results, mean_sd_movie, by = "decade") ##the means and standard deviations for the known population are very close to the means and standard deviation of the samples.
+
+#step 8 Generate a sampling distribution of mean runtimeMinutes for each decade by [a] drawing 1000 random samples of 100 movies from each decade, without replacement, and, for each sample, [b] calculating the mean runtimeMinutes and the standard deviation in runtimeMinutes for each decade.
+
+
+samp_dist<- do(1000)*sample_n(group_by(filter_movies, decade), size = 100, replace = FALSE)
+
+##step 9 Then, calculate the mean and the standard deviation of the sampling distribution of sample means for each decade and plot a histogram of the sampling distribution for each decade. 
+
+samp_dist_mean_sd<-samp_dist%>%
+  group_by(decade)%>%
+  summarise(avg = mean(runtimeMinutes),
+            sd = sd(runtimeMinutes))
+
+movie_time_his<-ggplot(data = samp_dist, aes(x = runtimeMinutes))+
+  geom_histogram(fill = "cyan3", col = "cyan3")+
+  facet_wrap(~ decade)+
+  theme_classic()
+#all the decades are skewed somewhat to the left, however the earlier decades are more dramatically skewed and the 50s, 60s, and 70s are starting to look more like a normal distribution. 
+
+##step 10 compare the standard error in runtimeMinutes for samples of size 100 from each decade as estimted from your first sample of 100 movies, as calculated from the known population standar deviations for each decade 
+
+samp_dist_mean_sd<-samp_dist%>%
+  group_by(decade)%>%
+  summarise(avg = mean(runtimeMinutes),
+            sd = sd(runtimeMinutes),
+            se = sd/sqrt(nrow(movie_decade)))
+
+stand_error<-full_join(joined, samp_dist_mean_sd, by = "decade")
+
+
+se<- stand_error%>%
+  select(decade, se.x, se.y, se)
+
+##the standard errors are all very close from the first sample of 100 movies, from the known population and as estimated from the sampling distribution. 
+```
+
+You can add options to executable code like this 
+
+```{r}
+
+#| eval: false
+##challenge 2
+
+#step 1
+
+ds2<-"https://raw.githubusercontent.com/difiore/ada-datasets/main/zombies.csv"
+
+z<-read.csv(ds2)
+
+#step 2 calculate the population mean and standard deviation for each quantitative random variable in the data dataset
+
+pop_mean_sd<-z%>%
+  select(-id)%>%
+  summarise(across(where(is.numeric),
+                   list(mean = mean, sd = sd),
+                   na.rm = TRUE))
+
+#step 3 Use {ggplot} and make boxplots of each of these variables by gender.
+
+zhboxplot<-ggplot(data = z, aes(y=height))+
+  geom_boxplot()+
+  facet_wrap(~gender)+
+  theme_classic()
+
+zwboxplot<-ggplot(data = z, aes(y=weight))+
+  geom_boxplot()+
+  facet_wrap(~gender)+
+  theme_classic()
+
+zaboxplot<-ggplot(data = z, aes(y=age))+
+  geom_boxplot()+
+  facet_wrap(~gender)+
+  theme_classic()
+
+zkboxplot<-ggplot(data = z, aes(y=zombies_killed))+
+  geom_boxplot()+
+  facet_wrap(~gender)+
+  theme_classic()
+
+zeboxplot<-ggplot(data = z, aes(y=years_of_education))+
+  geom_boxplot()+
+  facet_wrap(~gender)+
+  theme_classic()
+
+#step 4 Use {ggplot} and make scatterplots of height and weight in relation to age (i.e., use age as the x variable), using different colored points for males versus females. Do these variables seem to be related? In what way?
+
+zhscatter<-ggplot(data = z, aes(x=age, y = height, color = gender))+
+  geom_point()+
+  theme_classic()
+
+##it seems that there is a positive correlation between age and height 
+
+zwscatter<-ggplot(data = z, aes(x=age, y = weight, color = gender))+
+  geom_point()+
+  theme_classic()
+
+#It does not seem that there is much of a relationship between weight and age. 
+
+##step 5 Using histograms and Q-Q plots, check whether each of the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not?
+
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
