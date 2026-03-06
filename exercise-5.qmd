@@ -236,20 +236,122 @@ n <- 50  # size of each sample
 s <- list()  # create a dummy variable to hold each sample
 # dummy variable needs to be a list, not a vector, since each element will hold
 # a vector of numbers
+
+##mean for height
 for (i in 1:k) {
     s[[i]] <- sample(z$height, size = n, replace = FALSE)
 }
 
 head(s)
 
-m <- vector(length = k)  # create a dummy variable to hold the mean of each sample
+means_zh <- vector(length = k)  # create a dummy variable to hold the mean of each sample
 
-for (i in 1:k) { ##create a loop to calculate the mean and store results as a vector
-    m[[i]] <- mean(s[[i]])
+for (i in 1:k) { ##create a loop to calculate the mean of each sample and store results as a vector
+    means_zh[[i]] <- mean(s[[i]])
 }
-head(m)
+head(means_zh)
+
+mean(means_zh)
+sd(means_zh)
+
+##mean for weight
+for (i in 1:k) {
+    s[[i]] <- sample(z$weight, size = n, replace = FALSE)
+}
+
+head(s)
+
+means_zw <- vector(length = k)  # create a dummy variable to hold the mean of each sample
+
+for (i in 1:k) { ##create a loop to calculate the mean of each sample and store results as a vector
+    means_zw[[i]] <- mean(s[[i]])
+}
+head(means_zw)
+
+mean(means_zw)
+sd(means_zw)
+
+##mean for age
+for (i in 1:k) {
+    s[[i]] <- sample(z$age, size = n, replace = FALSE)
+}
+
+head(s)
+
+means_za <- vector(length = k)  # create a dummy variable to hold the mean of each sample
+
+for (i in 1:k) { ##create a loop to calculate the mean of each sample and store results as a vector
+    means_za[[i]] <- mean(s[[i]])
+}
+head(means_za)
+
+mean(means_za)
+sd(means_za)
+
+##mean for zombies_killed
+for (i in 1:k) {
+    s[[i]] <- sample(z$zombies_killed, size = n, replace = FALSE)
+}
+
+head(s)
+
+means_zk <- vector(length = k)  # create a dummy variable to hold the mean of each sample
+
+for (i in 1:k) { ##create a loop to calculate the mean of each sample and store results as a vector
+    means_zk[[i]] <- mean(s[[i]])
+}
+head(means_zk)
+
+mean(means_zk)
+sd(means_zk)
+
+##mean for education
+for (i in 1:k) {
+    s[[i]] <- sample(z$years_of_education, size = n, replace = FALSE)
+}
+
+head(s)
+
+means_ze <- vector(length = k)  # create a dummy variable to hold the mean of each sample
+
+for (i in 1:k) { ##create a loop to calculate the mean of each sample and store results as a vector
+    means_ze[[i]] <- mean(s[[i]])
+}
+head(means_ze)
+
+mean(means_ze)
+sd(means_ze)
+
+##the means are similar but the standard deviations of the one sample of fifty is much larger than the sampling distribution standard deviations.
+
+##step 8 plot the sampling distributions for each variable mean. what do they look like? are they normally distributed?
+
+histogram(means_zh) #normally distributed
+histogram(means_zw) #normally distributed
+histogram(means_za)
+histogram(means_zk) #normally distributed
+histogram(means_ze) #normally distributed
 
 
+qqnorm(means_zh, main = "QQ Plot - Random Normal Variable") ##seems to be drawn from a normal distribution
+qqline(means_zh, col = "gray")
+
+qqnorm(means_zw, main = "QQ Plot - Random Normal Variable") ##seems to be drawn from a normal distribution
+qqline(means_zw, col = "gray")
+
+qqnorm(means_za, main = "QQ Plot - Random Normal Variable") ##seems to be drawn from a normal distribution
+qqline(means_za, col = "gray")
+
+qqnorm(means_zk, main = "QQ Plot - Random Normal Variable") ##seems to be drawn from a normal distribution
+qqline(means_zk, col = "gray")
+
+qqnorm(means_ze, main = "QQ Plot - Random Normal Variable") ##seems to be drawn from a normal distribution
+qqline(means_ze, col = "gray")
+
+
+##all the distributions are now normally distributed whereas zombies killed and years of education were originally drawn from a poisson distribution 
+
+#step 9 construct a 95% confidence intervale for each mean directly from the sampling distribution of sample means using the central 95% that distribution. 
 ```
 
 The `echo: false` option disables the printing of code (only output is displayed).
