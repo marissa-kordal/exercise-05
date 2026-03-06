@@ -14,8 +14,7 @@ When you click the **Render** button a document will be generated that includes 
 
 ```{r} 
 
-#| eval: false
-#| 
+
 library(tidyverse)
 library(ggplot2)
 library(fishualize)
@@ -116,7 +115,6 @@ You can add options to executable code like this
 
 ```{r}
 
-#| eval: false
 ##challenge 2
 
 #step 1
@@ -175,6 +173,82 @@ zwscatter<-ggplot(data = z, aes(x=age, y = weight, color = gender))+
 #It does not seem that there is much of a relationship between weight and age. 
 
 ##step 5 Using histograms and Q-Q plots, check whether each of the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not?
+
+histogram(z$height)
+histogram(z$weight)
+histogram(z$zombies_killed)
+histogram(z$years_of_education)
+histogram(z$age)
+
+qqnorm(z$height, main = "QQ Plot - Random Normal Variable") ##seems to be drawn from a normal distribution
+qqline(z$height, col = "gray")
+
+qqnorm(z$weight, main = "QQ Plot - Random Normal Variable") #drawn from a normal distribution
+qqline(z$weight, col = "gray")
+
+qqnorm(z$zombies_killed, main = "QQ Plot - Random Normal Variable")#not drawn from a normal distribution 
+qqline(z$zombies_killed, col = "gray")
+
+qqnorm(z$years_of_education, main = "QQ Plot - Random Normal Variable")#not drawn from a normal distribution
+qqline(z$years_of_education, col = "gray")
+
+qqnorm(z$age, main = "QQ Plot - Random Normal Variable") #drawn from a normal distribuiton
+qqline(z$age, col = "gray")
+
+
+##step 6
+
+#Now use the sample_n() or slice_sample() function from {dplyr} to sample ONE subset of 50 zombie apocalypse survivors (without replacement) from this population and calculate the mean and sample standard deviation for each variable. Also estimate the standard error for each variable based on this one sample and use that to construct a theoretical 95% confidence interval for each mean. 
+
+samplez<-sample_n(z, size = 50, replace = FALSE)
+
+sample_mean_sd<-samplez%>%
+  select(-id)%>%
+  summarise(across(where(is.numeric),
+                   list(mean = mean, sd = sd),
+                   na.rm = TRUE))
+
+sezh <- sd(samplez$height)/sqrt(length(samplez$height))
+
+sezw <- sd(samplez$weight)/sqrt(length(samplez$weight))
+
+sezk <- sd(samplez$zombies_killed)/sqrt(length(samplez$zombies_killed))
+
+seze <- sd(samplez$years_of_education)/sqrt(length(samplez$years_of_education))
+
+seza<- sd(samplez$age)/sqrt(length(samplez$age))
+
+##calculate the confidence interval for each mean
+cizh <- sample_mean_sd$height_mean + qnorm(c(0.025, 0.975))* sezh
+
+cizw <- sample_mean_sd$weight_mean + qnorm(c(0.025, 0.975))* sezw
+
+cizk <- sample_mean_sd$zombies_killed_mean + qnorm(c(0.025, 0.975))* sezk
+
+cize <- sample_mean_sd$years_of_education_mean + qnorm(c(0.025, 0.975))* seze
+
+ciza <- sample_mean_sd$age_mean + qnorm(c(0.025, 0.975))* seza
+
+##step 7 Then draw another 199 random samples of 50 zombie apocalypse survivors out of the population and calculate the mean for each of the these samples. Together with the first sample you drew out, you now have a set of 200 means for each variable (each of which is based on 50 observations), which constitutes a sampling distribution for each variable.
+
+k <- 199  # number of samples
+n <- 50  # size of each sample
+s <- list()  # create a dummy variable to hold each sample
+# dummy variable needs to be a list, not a vector, since each element will hold
+# a vector of numbers
+for (i in 1:k) {
+    s[[i]] <- sample(z$height, size = n, replace = FALSE)
+}
+
+head(s)
+
+m <- vector(length = k)  # create a dummy variable to hold the mean of each sample
+
+for (i in 1:k) { ##create a loop to calculate the mean and store results as a vector
+    m[[i]] <- mean(s[[i]])
+}
+head(m)
+
 
 ```
 
