@@ -219,15 +219,15 @@ seze <- sd(samplez$years_of_education)/sqrt(length(samplez$years_of_education))
 seza<- sd(samplez$age)/sqrt(length(samplez$age))
 
 ##calculate the confidence interval for each mean
-cizh <- sample_mean_sd$height_mean + qnorm(c(0.025, 0.975))* sezh
+cizh <- sample_mean_sd$height_mean + qnorm(c(0.025, 0.975))* sezh #[1] 67.59125 67.74840
 
-cizw <- sample_mean_sd$weight_mean + qnorm(c(0.025, 0.975))* sezw
+cizw <- sample_mean_sd$weight_mean + qnorm(c(0.025, 0.975))* sezw #[1] 143.5507 144.2415
 
-cizk <- sample_mean_sd$zombies_killed_mean + qnorm(c(0.025, 0.975))* sezk
+cizk <- sample_mean_sd$zombies_killed_mean + qnorm(c(0.025, 0.975))* sezk #[1] 2.971797 3.037851
 
-cize <- sample_mean_sd$years_of_education_mean + qnorm(c(0.025, 0.975))* seze
+cize <- sample_mean_sd$years_of_education_mean + qnorm(c(0.025, 0.975))* seze #[1] 2.960935 3.025598
 
-ciza <- sample_mean_sd$age_mean + qnorm(c(0.025, 0.975))* seza
+ciza <- sample_mean_sd$age_mean + qnorm(c(0.025, 0.975))* seza #[1] 19.94281 20.06494
 
 ##step 7 Then draw another 199 random samples of 50 zombie apocalypse survivors out of the population and calculate the mean for each of the these samples. Together with the first sample you drew out, you now have a set of 200 means for each variable (each of which is based on 50 observations), which constitutes a sampling distribution for each variable.
 
@@ -251,7 +251,7 @@ for (i in 1:k) { ##create a loop to calculate the mean of each sample and store 
 }
 head(means_zh)
 
-mean(means_zh)
+sd_mean_zh<-mean(means_zh)
 sd(means_zh)
 
 ##mean for weight
@@ -268,7 +268,7 @@ for (i in 1:k) { ##create a loop to calculate the mean of each sample and store 
 }
 head(means_zw)
 
-mean(means_zw)
+sd_mean_zw<-mean(means_zw)
 sd(means_zw)
 
 ##mean for age
@@ -285,7 +285,7 @@ for (i in 1:k) { ##create a loop to calculate the mean of each sample and store 
 }
 head(means_za)
 
-mean(means_za)
+sd_mean_za<-mean(means_za)
 sd(means_za)
 
 ##mean for zombies_killed
@@ -302,7 +302,7 @@ for (i in 1:k) { ##create a loop to calculate the mean of each sample and store 
 }
 head(means_zk)
 
-mean(means_zk)
+sd_mean_zk<-mean(means_zk)
 sd(means_zk)
 
 ##mean for education
@@ -319,7 +319,7 @@ for (i in 1:k) { ##create a loop to calculate the mean of each sample and store 
 }
 head(means_ze)
 
-mean(means_ze)
+sd_mean_ze<-mean(means_ze)
 sd(means_ze)
 
 ##the means are similar but the standard deviations of the one sample of fifty is much larger than the sampling distribution standard deviations.
@@ -328,7 +328,7 @@ sd(means_ze)
 
 histogram(means_zh) #normally distributed
 histogram(means_zw) #normally distributed
-histogram(means_za)
+histogram(means_za) #normally distributed
 histogram(means_zk) #normally distributed
 histogram(means_ze) #normally distributed
 
@@ -351,7 +351,146 @@ qqline(means_ze, col = "gray")
 
 ##all the distributions are now normally distributed whereas zombies killed and years of education were originally drawn from a poisson distribution 
 
-#step 9 construct a 95% confidence intervale for each mean directly from the sampling distribution of sample means using the central 95% that distribution. 
+#step 9 construct a 95% confidence interval for each mean directly from the sampling distribution of sample means using the central 95% that distribution. 
+
+#calculate standard error 
+
+sdsezh <- sd(means_zh)/sqrt(length(means_zh))
+
+sdsezw <- sd(means_zw)/sqrt(length(means_zw))
+sdsezk <- sd(means_zk)/sqrt(length(means_zk))
+sdseze <- sd(means_ze)/sqrt(length(means_ze))
+sdseza <- sd(means_za)/sqrt(length(means_za))
+
+#calculate the ci for our sampling distribution of height
+
+percent_ci <- 95
+alpha <- 1 - percent_ci/100
+
+lower <- sd_mean_zh + qnorm(alpha/2)*sdsezh
+upper <- sd_mean_zh + qnorm(1-alpha/2)*sdsezh
+
+(cizh<-c(lower, upper)) #[1] 67.59125 67.74840
+
+#calculate the ci for our sampling distribution of weight
+
+lower <- sd_mean_zw + qnorm(alpha/2)*sdsezw
+upper <- sd_mean_zw + qnorm(1-alpha/2)*sdsezw
+
+(cizw<-c(lower, upper)) #[1] 143.5507 144.2415
+
+#calculate the ci for our sampling distribution of age
+
+lower <- sd_mean_za + qnorm(alpha/2)*sdseza
+upper <- sd_mean_za + qnorm(1-alpha/2)*sdseza
+
+(ciza<-c(lower, upper)) #[1] 19.94281 20.06494
+
+#calculate the ci for our sampling distribution of zombies killed
+
+lower <- sd_mean_zk + qnorm(alpha/2)*sdsezk
+upper <- sd_mean_zk + qnorm(1-alpha/2)*sdsezk
+
+(cizk<-c(lower, upper)) #[1] 2.971797 3.037851
+
+lower <- sd_mean_ze + qnorm(alpha/2)*sdseze
+upper <- sd_mean_ze + qnorm(1-alpha/2)*sdseze
+
+(cize<-c(lower, upper)) #[1] 2.960935 3.025598
+
+##the confidence intervals are the same from the single sample to the confidence intervals created based on the sampling distribution. 
+
+##step 10 Finally, use bootstrapping to generate a 95% confidence interval for each variable mean by resampling 1000 samples, with replacement, from your original sample
+
+##for height
+n_boot<-1000
+boot<- vector(length = n_boot)
+n <- length(z)
+
+for (i in 1:n_boot) {
+  boot[[i]] <- mean(sample(z$height, n, replace = TRUE))
+}
+
+
+hist(boot, breaks = 25, ylim = c(0, 150), xlab = "Mean", main = "Bootstrap Sampling Distribution")
+
+abline(v = quantile(boot, 0.025), col = "blue")
+# lower ci bound inferred by bootstrapping
+abline(v = quantile(boot, 0.975), col = "blue")
+# upper ci bound inferred by bootstrapping
+
+
+##for weight
+n_boot<-1000
+boot<- vector(length = n_boot)
+n <- length(z)
+
+for (i in 1:n_boot) {
+  boot[[i]] <- mean(sample(z$weight, n, replace = TRUE))
+}
+
+
+hist(boot, breaks = 25, ylim = c(0, 150), xlab = "Mean", main = "Bootstrap Sampling Distribution")
+
+abline(v = quantile(boot, 0.025), col = "blue")
+# lower ci bound inferred by bootstrapping
+abline(v = quantile(boot, 0.975), col = "blue")
+# upper ci bound inferred by bootstrapping
+
+##for age
+n_boot<-1000
+boot<- vector(length = n_boot)
+n <- length(z)
+
+for (i in 1:n_boot) {
+  boot[[i]] <- mean(sample(z$age, n, replace = TRUE))
+}
+
+
+hist(boot, breaks = 25, ylim = c(0, 150), xlab = "Mean", main = "Bootstrap Sampling Distribution")
+
+abline(v = quantile(boot, 0.025), col = "blue")
+# lower ci bound inferred by bootstrapping
+abline(v = quantile(boot, 0.975), col = "blue")
+# upper ci bound inferred by bootstrapping
+
+##for zombies killed
+n_boot<-1000
+boot<- vector(length = n_boot)
+n <- length(z)
+
+for (i in 1:n_boot) {
+  boot[[i]] <- mean(sample(z$zombies_killed, n, replace = TRUE))
+}
+
+
+hist(boot, breaks = 25, ylim = c(0, 150), xlab = "Mean", main = "Bootstrap Sampling Distribution")
+
+abline(v = quantile(boot, 0.025), col = "blue")
+# lower ci bound inferred by bootstrapping
+abline(v = quantile(boot, 0.975), col = "blue")
+# upper ci bound inferred by bootstrapping
+
+
+##for age
+n_boot<-1000
+boot<- vector(length = n_boot)
+n <- length(z)
+
+for (i in 1:n_boot) {
+  boot[[i]] <- mean(sample(z$years_of_education, n, replace = TRUE))
+}
+
+
+hist(boot, breaks = 25, ylim = c(0, 150), xlab = "Mean", main = "Bootstrap Sampling Distribution")
+
+abline(v = quantile(boot, 0.025), col = "blue")
+# lower ci bound inferred by bootstrapping
+abline(v = quantile(boot, 0.975), col = "blue")
+# upper ci bound inferred by bootstrapping
+
+
+##the CI based on boostrapping are much wider in distribution than the ones that were previously calculated in step 9.
 ```
 
 The `echo: false` option disables the printing of code (only output is displayed).
