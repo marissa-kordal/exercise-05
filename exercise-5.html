@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2036-03-04">
+
+<title>Exercise-05</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="exercise-5_files/libs/clipboard/clipboard.min.js"></script>
+<script src="exercise-5_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="exercise-5_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="exercise-5_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="exercise-5_files/libs/quarto-html/popper.min.js"></script>
+<script src="exercise-5_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="exercise-5_files/libs/quarto-html/anchor.min.js"></script>
+<link href="exercise-5_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="exercise-5_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="exercise-5_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="exercise-5_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="exercise-5_files/libs/bootstrap/bootstrap-9e3ffae467580fdb927a41352e75a2e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Exercise-05</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 4, 2036</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="quarto" class="level2">
+<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
+<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
+</section>
+<section id="running-code" class="level2">
+<h2 class="anchored" data-anchor-id="running-code">Running Code</h2>
+<p>When you click the <strong>Render</strong> button a document will be generated that includes both content and the output of embedded code. You can embed code like this:</p>
+<p>```rmb #</p>
+<p>library(tidyverse) library(ggplot2) library(fishualize) library(mosaic)</p>
+<p>ds&lt;-“http://raw.githubusercontent.com/difiore/ada-datasets/main/IMDB-movies.csv”</p>
+<p>movie&lt;-read.csv(ds)</p>
+<p>#step 2 filter_movies&lt;-movie%&gt;% filter(startYear &gt;= 1920, startYear &lt;= 1979)%&gt;% filter(runtimeMinutes&gt;=60, runtimeMinutes&lt;=180)%&gt;% mutate(decade = case_when( startYear &gt;= 1920 &amp; startYear &lt;= 1929 ~ “1920s”, startYear &gt;= 1930 &amp; startYear &lt;= 1939 ~ “1930s”, startYear &gt;= 1940 &amp; startYear &lt;= 1949 ~ “1940s”, startYear &gt;= 1950 &amp; startYear &lt;= 1959 ~ “1950s”, startYear &gt;= 1960 &amp; startYear &lt;= 1969 ~ “1960s”, startYear &gt;= 1970 &amp; startYear &lt;= 1979 ~ “1970s”, ))</p>
+<p>#step 3 movie_time&lt;-ggplot(data = filter_movies, aes(x = runtimeMinutes))+ geom_histogram(fill = “cyan3”, col = “cyan3”)+ facet_wrap(~ decade)+ theme_classic()</p>
+<p>#step 4 use a one-line statement to calculate the population mean and population standard deviation in runtimeminutes for each decade and save the results in a new dataframe called results</p>
+<p>results&lt;- filter_movies%&gt;% group_by(decade)%&gt;% summarise(avg = mean(runtimeMinutes), sd = sd(runtimeMinutes)) #se = sd/sqrt(nrow(movie_decade)))</p>
+<p>##step 5 draw a single sample of 100 movies, without replacement, from each decade and calculate the single sample mean and single sample standard deviation in runtimeminutes for each decade.</p>
+<p>reps&lt;-100</p>
+<p>movie_decade&lt;-filter_movies%&gt;% group_by(decade)%&gt;% sample_n(size = 100, replace = FALSE)</p>
+<p>mean_sd_movie&lt;-movie_decade%&gt;% group_by(decade)%&gt;% summarise(avg = mean(runtimeMinutes), sd = sd(runtimeMinutes))</p>
+<p>##step 6 calculate for each decade the standard error around your estimate of the population mean runtimeminutes based on the standard dev and sample size (n=100 movies) of your single sample.</p>
+<p>mean_sd_movie&lt;-movie_decade%&gt;% group_by(decade)%&gt;% summarise(avg = mean(runtimeMinutes), sd = sd(runtimeMinutes), se = sd/sqrt(nrow(movie_decade)))</p>
+<p>##step 7 compare the estimates to the actual population mean runtimeMinutes for each decade and to the expected SE in the population mean for samples of size 100 based on the known population SD for each decade.</p>
+<p>joined&lt;-full_join(results, mean_sd_movie, by = “decade”) ##the means and standard deviations for the known population are very close to the means and standard deviation of the samples.</p>
+<p>#step 8 Generate a sampling distribution of mean runtimeMinutes for each decade by [a] drawing 1000 random samples of 100 movies from each decade, without replacement, and, for each sample, [b] calculating the mean runtimeMinutes and the standard deviation in runtimeMinutes for each decade.</p>
+<p>samp_dist&lt;- do(1000)*sample_n(group_by(filter_movies, decade), size = 100, replace = FALSE)</p>
+<p>##step 9 Then, calculate the mean and the standard deviation of the sampling distribution of sample means for each decade and plot a histogram of the sampling distribution for each decade.</p>
+<p>samp_dist_mean_sd&lt;-samp_dist%&gt;% group_by(decade)%&gt;% summarise(avg = mean(runtimeMinutes), sd = sd(runtimeMinutes))</p>
+<p>movie_time_his&lt;-ggplot(data = samp_dist, aes(x = runtimeMinutes))+ geom_histogram(fill = “cyan3”, col = “cyan3”)+ facet_wrap(~ decade)+ theme_classic() #all the decades are skewed somewhat to the left, however the earlier decades are more dramatically skewed and the 50s, 60s, and 70s are starting to look more like a normal distribution.</p>
+<p>##step 10 compare the standard error in runtimeMinutes for samples of size 100 from each decade as estimted from your first sample of 100 movies, as calculated from the known population standar deviations for each decade</p>
+<p>samp_dist_mean_sd&lt;-samp_dist%&gt;% group_by(decade)%&gt;% summarise(avg = mean(runtimeMinutes), sd = sd(runtimeMinutes), se = sd/sqrt(nrow(movie_decade)))</p>
+<p>stand_error&lt;-full_join(joined, samp_dist_mean_sd, by = “decade”)</p>
+<p>se&lt;- stand_error%&gt;% select(decade, se.x, se.y, se)</p>
+<p>##the standard errors are all very close from the first sample of 100 movies, from the known population and as estimated from the sampling distribution.</p>
+<pre><code>
+You can add options to executable code like this 
+
+```{r} #
+
+##challenge 2
+
+#step 1
+
+ds2&lt;-"https://raw.githubusercontent.com/difiore/ada-datasets/main/zombies.csv"
+
+z&lt;-read.csv(ds2)
+
+#step 2 calculate the population mean and standard deviation for each quantitative random variable in the data dataset
+
+pop_mean_sd&lt;-z%&gt;%
+  select(-id)%&gt;%
+  summarise(across(where(is.numeric),
+                   list(mean = mean, sd = sd),
+                   na.rm = TRUE))
+
+#step 3 Use {ggplot} and make boxplots of each of these variables by gender.
+
+zhboxplot&lt;-ggplot(data = z, aes(y=height))+
+  geom_boxplot()+
+  facet_wrap(~gender)+
+  theme_classic()
+
+zwboxplot&lt;-ggplot(data = z, aes(y=weight))+
+  geom_boxplot()+
+  facet_wrap(~gender)+
+  theme_classic()
+
+zaboxplot&lt;-ggplot(data = z, aes(y=age))+
+  geom_boxplot()+
+  facet_wrap(~gender)+
+  theme_classic()
+
+zkboxplot&lt;-ggplot(data = z, aes(y=zombies_killed))+
+  geom_boxplot()+
+  facet_wrap(~gender)+
+  theme_classic()
+
+zeboxplot&lt;-ggplot(data = z, aes(y=years_of_education))+
+  geom_boxplot()+
+  facet_wrap(~gender)+
+  theme_classic()
+
+#step 4 Use {ggplot} and make scatterplots of height and weight in relation to age (i.e., use age as the x variable), using different colored points for males versus females. Do these variables seem to be related? In what way?
+
+zhscatter&lt;-ggplot(data = z, aes(x=age, y = height, color = gender))+
+  geom_point()+
+  theme_classic()
+
+##it seems that there is a positive correlation between age and height 
+
+zwscatter&lt;-ggplot(data = z, aes(x=age, y = weight, color = gender))+
+  geom_point()+
+  theme_classic()
+
+#It does not seem that there is much of a relationship between weight and age. 
+
+##step 5 Using histograms and Q-Q plots, check whether each of the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not?
+
+histogram(z$height)
+histogram(z$weight)
+histogram(z$zombies_killed)
+histogram(z$years_of_education)
+histogram(z$age)
+
+qqnorm(z$height, main = "QQ Plot - Random Normal Variable") ##seems to be drawn from a normal distribution
+qqline(z$height, col = "gray")
+
+qqnorm(z$weight, main = "QQ Plot - Random Normal Variable") #drawn from a normal distribution
+qqline(z$weight, col = "gray")
+
+qqnorm(z$zombies_killed, main = "QQ Plot - Random Normal Variable")#not drawn from a normal distribution 
+qqline(z$zombies_killed, col = "gray")
+
+qqnorm(z$years_of_education, main = "QQ Plot - Random Normal Variable")#not drawn from a normal distribution
+qqline(z$years_of_education, col = "gray")
+
+qqnorm(z$age, main = "QQ Plot - Random Normal Variable") #drawn from a normal distribuiton
+qqline(z$age, col = "gray")
+
+
+##step 6
+
+#Now use the sample_n() or slice_sample() function from {dplyr} to sample ONE subset of 50 zombie apocalypse survivors (without replacement) from this population and calculate the mean and sample standard deviation for each variable. Also estimate the standard error for each variable based on this one sample and use that to construct a theoretical 95% confidence interval for each mean. 
+
+samplez&lt;-sample_n(z, size = 50, replace = FALSE)
+
+sample_mean_sd&lt;-samplez%&gt;%
+  select(-id)%&gt;%
+  summarise(across(where(is.numeric),
+                   list(mean = mean, sd = sd),
+                   na.rm = TRUE))
+
+sezh &lt;- sd(samplez$height)/sqrt(length(samplez$height))
+
+sezw &lt;- sd(samplez$weight)/sqrt(length(samplez$weight))
+
+sezk &lt;- sd(samplez$zombies_killed)/sqrt(length(samplez$zombies_killed))
+
+seze &lt;- sd(samplez$years_of_education)/sqrt(length(samplez$years_of_education))
+
+seza&lt;- sd(samplez$age)/sqrt(length(samplez$age))
+
+##calculate the confidence interval for each mean
+cizh &lt;- sample_mean_sd$height_mean + qnorm(c(0.025, 0.975))* sezh #[1] 67.59125 67.74840
+
+cizw &lt;- sample_mean_sd$weight_mean + qnorm(c(0.025, 0.975))* sezw #[1] 143.5507 144.2415
+
+cizk &lt;- sample_mean_sd$zombies_killed_mean + qnorm(c(0.025, 0.975))* sezk #[1] 2.971797 3.037851
+
+cize &lt;- sample_mean_sd$years_of_education_mean + qnorm(c(0.025, 0.975))* seze #[1] 2.960935 3.025598
+
+ciza &lt;- sample_mean_sd$age_mean + qnorm(c(0.025, 0.975))* seza #[1] 19.94281 20.06494
+
+##step 7 Then draw another 199 random samples of 50 zombie apocalypse survivors out of the population and calculate the mean for each of the these samples. Together with the first sample you drew out, you now have a set of 200 means for each variable (each of which is based on 50 observations), which constitutes a sampling distribution for each variable.
+
+k &lt;- 199  # number of samples
+n &lt;- 50  # size of each sample
+s &lt;- list()  # create a dummy variable to hold each sample
+# dummy variable needs to be a list, not a vector, since each element will hold
+# a vector of numbers
+
+##mean for height
+for (i in 1:k) {
+    s[[i]] &lt;- sample(z$height, size = n, replace = FALSE)
+}
+
+head(s)
+
+means_zh &lt;- vector(length = k)  # create a dummy variable to hold the mean of each sample
+
+for (i in 1:k) { ##create a loop to calculate the mean of each sample and store results as a vector
+    means_zh[[i]] &lt;- mean(s[[i]])
+}
+head(means_zh)
+
+sd_mean_zh&lt;-mean(means_zh)
+sd(means_zh)
+
+##mean for weight
+for (i in 1:k) {
+    s[[i]] &lt;- sample(z$weight, size = n, replace = FALSE)
+}
+
+head(s)
+
+means_zw &lt;- vector(length = k)  # create a dummy variable to hold the mean of each sample
+
+for (i in 1:k) { ##create a loop to calculate the mean of each sample and store results as a vector
+    means_zw[[i]] &lt;- mean(s[[i]])
+}
+head(means_zw)
+
+sd_mean_zw&lt;-mean(means_zw)
+sd(means_zw)
+
+##mean for age
+for (i in 1:k) {
+    s[[i]] &lt;- sample(z$age, size = n, replace = FALSE)
+}
+
+head(s)
+
+means_za &lt;- vector(length = k)  # create a dummy variable to hold the mean of each sample
+
+for (i in 1:k) { ##create a loop to calculate the mean of each sample and store results as a vector
+    means_za[[i]] &lt;- mean(s[[i]])
+}
+head(means_za)
+
+sd_mean_za&lt;-mean(means_za)
+sd(means_za)
+
+##mean for zombies_killed
+for (i in 1:k) {
+    s[[i]] &lt;- sample(z$zombies_killed, size = n, replace = FALSE)
+}
+
+head(s)
+
+means_zk &lt;- vector(length = k)  # create a dummy variable to hold the mean of each sample
+
+for (i in 1:k) { ##create a loop to calculate the mean of each sample and store results as a vector
+    means_zk[[i]] &lt;- mean(s[[i]])
+}
+head(means_zk)
+
+sd_mean_zk&lt;-mean(means_zk)
+sd(means_zk)
+
+##mean for education
+for (i in 1:k) {
+    s[[i]] &lt;- sample(z$years_of_education, size = n, replace = FALSE)
+}
+
+head(s)
+
+means_ze &lt;- vector(length = k)  # create a dummy variable to hold the mean of each sample
+
+for (i in 1:k) { ##create a loop to calculate the mean of each sample and store results as a vector
+    means_ze[[i]] &lt;- mean(s[[i]])
+}
+head(means_ze)
+
+sd_mean_ze&lt;-mean(means_ze)
+sd(means_ze)
+
+##the means are similar but the standard deviations of the one sample of fifty is much larger than the sampling distribution standard deviations.
+
+##step 8 plot the sampling distributions for each variable mean. what do they look like? are they normally distributed?
+
+histogram(means_zh) #normally distributed
+histogram(means_zw) #normally distributed
+histogram(means_za) #normally distributed
+histogram(means_zk) #normally distributed
+histogram(means_ze) #normally distributed
+
+
+qqnorm(means_zh, main = "QQ Plot - Random Normal Variable") ##seems to be drawn from a normal distribution
+qqline(means_zh, col = "gray")
+
+qqnorm(means_zw, main = "QQ Plot - Random Normal Variable") ##seems to be drawn from a normal distribution
+qqline(means_zw, col = "gray")
+
+qqnorm(means_za, main = "QQ Plot - Random Normal Variable") ##seems to be drawn from a normal distribution
+qqline(means_za, col = "gray")
+
+qqnorm(means_zk, main = "QQ Plot - Random Normal Variable") ##seems to be drawn from a normal distribution
+qqline(means_zk, col = "gray")
+
+qqnorm(means_ze, main = "QQ Plot - Random Normal Variable") ##seems to be drawn from a normal distribution
+qqline(means_ze, col = "gray")
+
+
+##all the distributions are now normally distributed whereas zombies killed and years of education were originally drawn from a poisson distribution 
+
+#step 9 construct a 95% confidence interval for each mean directly from the sampling distribution of sample means using the central 95% that distribution. 
+
+#calculate standard error 
+
+sdsezh &lt;- sd(means_zh)/sqrt(length(means_zh))
+
+sdsezw &lt;- sd(means_zw)/sqrt(length(means_zw))
+sdsezk &lt;- sd(means_zk)/sqrt(length(means_zk))
+sdseze &lt;- sd(means_ze)/sqrt(length(means_ze))
+sdseza &lt;- sd(means_za)/sqrt(length(means_za))
+
+#calculate the ci for our sampling distribution of height
+
+percent_ci &lt;- 95
+alpha &lt;- 1 - percent_ci/100
+
+lower &lt;- sd_mean_zh + qnorm(alpha/2)*sdsezh
+upper &lt;- sd_mean_zh + qnorm(1-alpha/2)*sdsezh
+
+(cizh&lt;-c(lower, upper)) #[1] 67.59125 67.74840
+
+#calculate the ci for our sampling distribution of weight
+
+lower &lt;- sd_mean_zw + qnorm(alpha/2)*sdsezw
+upper &lt;- sd_mean_zw + qnorm(1-alpha/2)*sdsezw
+
+(cizw&lt;-c(lower, upper)) #[1] 143.5507 144.2415
+
+#calculate the ci for our sampling distribution of age
+
+lower &lt;- sd_mean_za + qnorm(alpha/2)*sdseza
+upper &lt;- sd_mean_za + qnorm(1-alpha/2)*sdseza
+
+(ciza&lt;-c(lower, upper)) #[1] 19.94281 20.06494
+
+#calculate the ci for our sampling distribution of zombies killed
+
+lower &lt;- sd_mean_zk + qnorm(alpha/2)*sdsezk
+upper &lt;- sd_mean_zk + qnorm(1-alpha/2)*sdsezk
+
+(cizk&lt;-c(lower, upper)) #[1] 2.971797 3.037851
+
+lower &lt;- sd_mean_ze + qnorm(alpha/2)*sdseze
+upper &lt;- sd_mean_ze + qnorm(1-alpha/2)*sdseze
+
+(cize&lt;-c(lower, upper)) #[1] 2.960935 3.025598
+
+##the confidence intervals are the same from the single sample to the confidence intervals created based on the sampling distribution. 
+
+##step 10 Finally, use bootstrapping to generate a 95% confidence interval for each variable mean by resampling 1000 samples, with replacement, from your original sample
+
+##for height
+n_boot&lt;-1000
+boot&lt;- vector(length = n_boot)
+n &lt;- length(z)
+
+for (i in 1:n_boot) {
+  boot[[i]] &lt;- mean(sample(z$height, n, replace = TRUE))
+}
+
+
+hist(boot, breaks = 25, ylim = c(0, 150), xlab = "Mean", main = "Bootstrap Sampling Distribution")
+
+abline(v = quantile(boot, 0.025), col = "blue")
+# lower ci bound inferred by bootstrapping
+abline(v = quantile(boot, 0.975), col = "blue")
+# upper ci bound inferred by bootstrapping
+
+
+##for weight
+n_boot&lt;-1000
+boot&lt;- vector(length = n_boot)
+n &lt;- length(z)
+
+for (i in 1:n_boot) {
+  boot[[i]] &lt;- mean(sample(z$weight, n, replace = TRUE))
+}
+
+
+hist(boot, breaks = 25, ylim = c(0, 150), xlab = "Mean", main = "Bootstrap Sampling Distribution")
+
+abline(v = quantile(boot, 0.025), col = "blue")
+# lower ci bound inferred by bootstrapping
+abline(v = quantile(boot, 0.975), col = "blue")
+# upper ci bound inferred by bootstrapping
+
+##for age
+n_boot&lt;-1000
+boot&lt;- vector(length = n_boot)
+n &lt;- length(z)
+
+for (i in 1:n_boot) {
+  boot[[i]] &lt;- mean(sample(z$age, n, replace = TRUE))
+}
+
+
+hist(boot, breaks = 25, ylim = c(0, 150), xlab = "Mean", main = "Bootstrap Sampling Distribution")
+
+abline(v = quantile(boot, 0.025), col = "blue")
+# lower ci bound inferred by bootstrapping
+abline(v = quantile(boot, 0.975), col = "blue")
+# upper ci bound inferred by bootstrapping
+
+##for zombies killed
+n_boot&lt;-1000
+boot&lt;- vector(length = n_boot)
+n &lt;- length(z)
+
+for (i in 1:n_boot) {
+  boot[[i]] &lt;- mean(sample(z$zombies_killed, n, replace = TRUE))
+}
+
+
+hist(boot, breaks = 25, ylim = c(0, 150), xlab = "Mean", main = "Bootstrap Sampling Distribution")
+
+abline(v = quantile(boot, 0.025), col = "blue")
+# lower ci bound inferred by bootstrapping
+abline(v = quantile(boot, 0.975), col = "blue")
+# upper ci bound inferred by bootstrapping
+
+
+##for age
+n_boot&lt;-1000
+boot&lt;- vector(length = n_boot)
+n &lt;- length(z)
+
+for (i in 1:n_boot) {
+  boot[[i]] &lt;- mean(sample(z$years_of_education, n, replace = TRUE))
+}
+
+
+hist(boot, breaks = 25, ylim = c(0, 150), xlab = "Mean", main = "Bootstrap Sampling Distribution")
+
+abline(v = quantile(boot, 0.025), col = "blue")
+# lower ci bound inferred by bootstrapping
+abline(v = quantile(boot, 0.975), col = "blue")
+# upper ci bound inferred by bootstrapping
+
+
+##the CI based on boostrapping are much wider in distribution than the ones that were previously calculated in step 9.</code></pre>
+<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

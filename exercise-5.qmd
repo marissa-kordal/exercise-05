@@ -12,7 +12,7 @@ Quarto enables you to weave together content and executable code into a finished
 
 When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
 
-```{r} 
+```{r} #
 
 
 library(tidyverse)
@@ -48,8 +48,8 @@ movie_time<-ggplot(data = filter_movies, aes(x = runtimeMinutes))+
 results<- filter_movies%>%
   group_by(decade)%>%
   summarise(avg = mean(runtimeMinutes),
-            sd = sd(runtimeMinutes),
-            se = sd/sqrt(nrow(movie_decade)))
+            sd = sd(runtimeMinutes))
+            #se = sd/sqrt(nrow(movie_decade)))
 
 ##step 5 draw a single sample of 100 movies, without replacement, from each decade and calculate the single sample mean and single sample standard deviation in runtimeminutes for each decade. 
 
@@ -113,7 +113,7 @@ se<- stand_error%>%
 
 You can add options to executable code like this 
 
-```{r}
+```{r} #
 
 ##challenge 2
 
